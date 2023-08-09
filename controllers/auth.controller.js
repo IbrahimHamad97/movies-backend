@@ -23,9 +23,10 @@ export const signup = async (req, res) => {
         email,
         password: hashedPassword,
       }).save();
-      const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
-        expiresIn: "7d",
-      });
+      // const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
+      //   expiresIn: "7d",
+      // });
+      const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
       const { password, ...rest } = user._doc;
       return res.json({
         token,
@@ -55,9 +56,10 @@ export const signin = async (req, res) => {
       });
     }
 
-    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "7d",
-    });
+    // const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
+    //   expiresIn: "7d",
+    // });
+    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
     user.password = undefined;
     user.secret = undefined;
     res.json({
@@ -130,7 +132,7 @@ export const getUser = async (req, res) => {
     const token = req.headers.authorization.split(" ")[1];
     jwt.verify(token, process.env.JWT_SECRET, async (err, decoded) => {
       if (err) {
-        return res.status(401).json({ error: "Invalid token" });
+        return res.status(401).json({ error: "Invalid token", status: 401 });
       }
       const userId = decoded._id;
       const user = await User.findOne({ _id: userId });
